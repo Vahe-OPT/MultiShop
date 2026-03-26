@@ -15,4 +15,37 @@ model User {
   role      String   @default("buyer")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  shop Shop?
+}
+
+model Shop {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  sellerId    String    @unique
+  seller      User      @relation(fields: [sellerId], references: [id])
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id          String         @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  shopId      String
+  shop        Shop           @relation(fields: [shopId], references: [id])
+  images      ProductImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  url       String
+  type      String // "thumbnail" | "gallery"
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
